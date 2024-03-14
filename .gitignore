@@ -19,3 +19,4 @@ REPO-VERSION-FILE
 /vendor
 
 .DS_Store
+git-repo-go

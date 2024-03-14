@@ -599,7 +599,7 @@ func unmarshalFile(file string) (*Manifest, error) {
 	return ms, nil
 }
 
-func parseXML(file string, depth int) ([]*Manifest, error) {
+func parseXML(file, incPath string, depth int) ([]*Manifest, error) {
 	ms := []*Manifest{}
 
 	m, err := unmarshalFile(file)
@@ -615,8 +615,12 @@ func parseXML(file string, depth int) ([]*Manifest, error) {
 	m.SourceFile = file
 	ms = append(ms, m)
 
+	if incPath == "" {
+		incPath = filepath.Dir(file)
+	}
+
 	for _, i := range m.Includes {
-		f, err := path.AbsJoin(filepath.Dir(file), i.Name)
+		f, err := path.AbsJoin(incPath, i.Name)
 		if err != nil {
 			return ms, err
 		}
@@ -632,7 +636,7 @@ func parseXML(file string, depth int) ([]*Manifest, error) {
 				file)
 		}
 
-		subMs, err := parseXML(f, depth+1)
+		subMs, err := parseXML(f, incPath, depth+1)
 		if err != nil {
 			return ms, err
 		}
@@ -699,7 +703,7 @@ func LoadFile(repoDir, file string) (*Manifest, error) {
 		return nil, nil
 	}
 
-	ms, err := parseXML(file, 1)
+	ms, err := parseXML(file, filepath.Join(repoDir, config.Manifests), 1)
 	if err != nil {
 		return nil, err
 	}
@@ -734,7 +738,7 @@ func LoadFile(repoDir, file string) (*Manifest, error) {
 	}
 
 	for _, file = range files {
-		ms, err := parseXML(file, 1)
+		ms, err := parseXML(file, "", 1)
 		if err != nil {
 			return nil, err
 		}
