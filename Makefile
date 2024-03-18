@@ -26,7 +26,7 @@ GOBUILD_MAC_ARM64 := env GOOS=darwin GOARCH=arm64 $(GOBUILD)
 BUILD_RELEASE_FLAG=-ldflags "-s -w"
 
 SHA256SUM=shasum -a 256
-GPGSIGN=gpg -sba -u Alibaba
+GPGSIGN=echo gpg -sba -u Alibaba
 # Returns a list of all non-vendored (local packages)
 LOCAL_PACKAGES = $(shell go list ./... | grep -v -e '^$(PKG)/vendor/')
 LOCAL_GO_FILES = $(shell find -L $BUILD_DIR  -name "*.go" -not -path "$(PKG_BUILD_DIR)/vendor/*" -not -path "$(PKG_BUILD_DIR)/_build/*")
